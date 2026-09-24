@@ -1,0 +1,17 @@
+[workspace]
+name = "pandoc-forge-filters"
+description = "pandoc filters for the pandoc-forge conda channel"
+channels = ["conda-forge"]
+platforms = ["linux-64", "linux-aarch64", "osx-64", "osx-arm64"]
+
+[dependencies]
+python = ">=3.12"
+pyyaml = "*"
+rattler-build = "==0.76.1"
+
+[tasks]
+gen = { cmd = "python scripts/gen-recipes.py", description = "Write recipes/ from filters.yaml and upstream" }
+check = { cmd = "python scripts/gen-recipes.py --check", description = "Fail if a recipe is out of date" }
+# Skips packages already in the dev channel, so only new recipes and build
+# numbers are built.
+build = { cmd = "rattler-build build --recipe-dir recipes --variant-config variants.yaml -c https://prefix.dev/{{ channel }} -c conda-forge --skip-existing all --output-dir output", args = [{ arg = "channel", default = "ickc/pandoc-forge-dev" }], description = "Build and test every recipe into output/, against pandoc from the dev channel" }
