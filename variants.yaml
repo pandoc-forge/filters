@@ -1,0 +1,7 @@
+# The pandoc API version every filter here is built for, like conda-forge's
+# python migration. A filter depends on `pandoc-api <this>.*`, which also
+# keeps it on pandoc-forge's pandoc. When pandoc changes its API (1.23 ->
+# 1.24), change it here, check the filters against the new pandoc, bump their
+# build numbers and rebuild.
+pandoc_api:
+  - "1.23"

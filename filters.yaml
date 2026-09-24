@@ -1,0 +1,17 @@
+# Lua filters packaged from upstream Quarto extensions. Each entry becomes
+# recipes/<package>/recipe.yaml via scripts/gen-recipes.py; edit this file,
+# never the generated recipes.
+#
+#   package:
+#     repo: <owner>/<repo> on GitHub
+#     tag: the upstream release tag; the package version is the tag without "v"
+#     build: build number, reset to 0 for a new tag
+#     license: SPDX identifier
+#     summary: one line
+
+pandoc-amsthm:
+  repo: ickc/pandoc-amsthm
+  tag: v3.1.1
+  build: 0
+  license: BSD-3-Clause
+  summary: amsthm theorem environments for pandoc and Quarto, as a Lua filter
