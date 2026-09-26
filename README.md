@@ -11,7 +11,7 @@ pandoc filters for the [pandoc-forge](https://github.com/pandoc-forge) conda cha
 From the dev channel, with pandoc-forge's pandoc:
 
 ```sh
-pixi workspace channel add --prepend https://prefix.dev/ickc/pandoc-forge-dev
+pixi workspace channel add --prepend https://prefix.dev/pandoc-forge/dev
 pixi add pandoc pandoc-amsthm
 ```
 
@@ -50,4 +50,4 @@ For a new upstream tag, update `tag` and reset `build` to 0. For a packaging fix
 
 ## Publishing
 
-Every push to `main` builds what isn't already in the dev channel (`ickc/pandoc-forge-dev`, or the repository variable `PREFIX_DEV_CHANNEL`) and uploads it with prefix.dev trusted publishing. Upstream test code runs in a job with no publishing token.
+Every push to `main` builds what isn't already in the dev channel (`pandoc-forge/dev`, or the repository variable `PREFIX_DEV_CHANNEL`) and uploads it with prefix.dev trusted publishing. Upstream test code runs in a job with no publishing token.

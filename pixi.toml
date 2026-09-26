@@ -14,4 +14,4 @@ gen = { cmd = "python scripts/gen-recipes.py", description = "Write recipes/ fro
 check = { cmd = "python scripts/gen-recipes.py --check", description = "Fail if a recipe is out of date" }
 # Skips packages already in the dev channel, so only new recipes and build
 # numbers are built.
-build = { cmd = "rattler-build build --recipe-dir recipes --variant-config variants.yaml -c https://prefix.dev/{{ channel }} -c conda-forge --skip-existing all --output-dir output", args = [{ arg = "channel", default = "ickc/pandoc-forge-dev" }], description = "Build and test every recipe into output/, against pandoc from the dev channel" }
+build = { cmd = "rattler-build build --recipe-dir recipes --variant-config variants.yaml -c https://prefix.dev/{{ channel }} -c conda-forge --skip-existing all --output-dir output", args = [{ arg = "channel", default = "pandoc-forge/dev" }], description = "Build and test every recipe into output/, against pandoc from the dev channel" }

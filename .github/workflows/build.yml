@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
-  DEV_CHANNEL: ${{ vars.PREFIX_DEV_CHANNEL || 'ickc/pandoc-forge-dev' }}
+  DEV_CHANNEL: ${{ vars.PREFIX_DEV_CHANNEL || 'pandoc-forge/dev' }}
 
 jobs:
   # Filters are noarch, so one Linux job builds them all. Each test runs
