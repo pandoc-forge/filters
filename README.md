@@ -51,3 +51,11 @@ For a new upstream tag, update `tag` and reset `build` to 0. For a packaging fix
 ## Publishing
 
 Every push to `main` builds what isn't already in the dev channel (`pandoc-forge/dev`, or the repository variable `PREFIX_DEV_CHANNEL`) and uploads it with prefix.dev trusted publishing. Upstream test code runs in a job with no publishing token.
+
+Releases go to the release channel (`pandoc-forge`, or the repository variable `PREFIX_RELEASE_CHANNEL`) one package at a time, from a tag `<package>-v<version>`, or `<package>-v<version>-<build>` for a build number above 0:
+
+```sh
+git tag pandoc-amsthm-v3.1.1 && git push origin pandoc-amsthm-v3.1.1
+```
+
+The tag's package is built and tested against the release channel's pandoc, and the build fails unless the recipe's version and build number match the tag. The upload runs in the `release` GitHub environment, which only admits `*-v*` tags, and never overwrites a package.
