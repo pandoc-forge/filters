@@ -1,0 +1,80 @@
+# Written by hand: Python packages aren't generated from filters.yaml.
+context:
+  version: "0.15.0"
+  build_number: 0
+
+package:
+  name: pantable
+  version: ${{ version }}
+
+source:
+  url: https://github.com/ickc/pantable/archive/refs/tags/v${{ version }}.tar.gz
+  sha256: 6e7d66304aedf918fd9a83765178e0b0462e88f5e5bcaebcc39bac30bdaaa7f8
+
+build:
+  number: ${{ build_number }}
+  noarch: python
+  string: pandoc_forge_${{ build_number }}
+  script: ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+  python:
+    entry_points:
+      - pantable = pantable.cli.pantable:main
+      - pantable2csv = pantable.cli.pantable2csv:main
+      - pantable2csvx = pantable.cli.pantable2csvx:main
+
+requirements:
+  host:
+    - python ${{ python_min }}.*
+    - pip
+    - uv-build >=0.12,<0.13
+  run:
+    - python >=${{ python_min }}
+    - numpy >=1.16,<3
+    - panflute >=2.3.1,<2.4
+    - pyyaml >=5,<7
+    # A JSON filter: pandoc runs it, so it needs the native engine, from
+    # 3.7.0.2 (upstream's tested minimum). conda-forge also caps pandoc <4;
+    # here the pandoc API does that job.
+    - pandoc >=3.7.0.2
+    - pandoc-api ${{ pandoc_api }}.*
+  run_constraints:
+    - coloredlogs >=14,<16
+    - tabulate >=0.8,<0.10
+    - yamlloader >=1,<2
+
+tests:
+  - python:
+      imports:
+        - pantable
+        - pantable.cli
+      pip_check: true
+      python_version: ${{ python_min }}.*
+  # Upstream's own suite, against the installed filters and pandoc-forge's
+  # pandoc. src/ is left out, so it imports the installed package.
+  - files:
+      source:
+        - docs/**
+        - pyproject.toml
+        - README.md
+        - tests/**
+    # With the extras, as upstream tests: without yamlloader, pantable warns.
+    requirements:
+      run:
+        - python ${{ python_min }}.*
+        - coloredlogs
+        - tabulate
+        - yamlloader
+        - pytest
+    script:
+      - echo '# testing' | pandoc -F pantable
+      - echo '# testing' | pandoc -F pantable2csv
+      - echo '# testing' | pandoc -F pantable2csvx
+      - python -m pytest -v
+
+about:
+  homepage: https://github.com/ickc/pantable
+  repository: https://github.com/ickc/pantable
+  documentation: https://ickc.github.io/pantable/
+  license: BSD-3-Clause
+  license_file: LICENSE
+  summary: CSV tables in pandoc Markdown, with a round trip back to CSV
