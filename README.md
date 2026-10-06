@@ -36,13 +36,17 @@ Its other dependencies (Python, numpy, pyyaml, ...) come from conda-forge.
 
 ## Dependencies
 
-Every package depends on `pandoc-api <version>.*`, from [`variants.yaml`](variants.yaml). It keeps the package on pandoc-forge's pandoc and on the pandoc API it was tested with. This is where these recipes differ from conda-forge's, which bound pandoc's version (`pandoc >=2.11.0.4,<4`) as a proxy for the API.
+**Version constraints describe interfaces, not quality.** A package constrains pandoc only for something it can't work without. A bug in some pandoc release is never a reason to refuse that pandoc: users should upgrade, but whatever pandoc they have, an environment that installs works at the API level. Its output is pandoc's responsibility. Note such bugs in a recipe comment or upstream's README instead.
+
+Every package depends on `pandoc-api <version>.*`, from [`variants.yaml`](variants.yaml). It is the AST the package speaks, and it keeps the package on pandoc-forge's pandoc. Each engine depends on the `pandoc-api` it speaks, so the two meet there, and no package needs a range of pandoc versions. This is where pandoc-forge sets its own standard: conda-forge, which has no `pandoc-api`, bounds pandoc's version as a proxy for the API (`pandoc >=2.11.0.4,<4`).
 
 | Kind | Example | Engine dependencies |
 |---|---|---|
-| Lua filter | pandoc-amsthm | The minimum pandoc version as run constraints on `pandoc` and `pandoc-wasm`. A Lua filter runs inside pandoc, so it depends on pandoc's version. A run constraint checks whichever engine is installed, and installs none. |
-| JSON filter | pantable | `pandoc`, with upstream's minimum version. pandoc runs it as a subprocess, which pandoc.wasm can't do. |
+| Lua filter | pandoc-amsthm | At most a minimum pandoc version, as run constraints on `pandoc` and `pandoc-wasm`, when the filter uses a Lua API function added in that pandoc (upstream's `pandoc-required`; best checked in the filter with `PANDOC_VERSION:must_be_at_least`). A run constraint checks whichever engine is installed, and installs none. |
+| JSON filter | pantable | `pandoc`, unversioned. pandoc runs it as a subprocess, which pandoc.wasm can't do. |
 | Filter library | panflute | None: `pandoc-api` alone. It reads and writes the AST without pandoc, and a filter built on it brings the engine. |
+
+No recipe here has an upper bound or an exact version on an engine: an exact pin is only for code linking the pandoc library, like pandoc-crossref in pandoc-feedstock. A minimum that only upstream's tests need (reference outputs from a newer pandoc) goes in the test's requirements, never the package's. `pixi run lint` checks these rules, and CI runs it.
 
 Python packages are `noarch: python`, built and tested with `python_min` from `variants.yaml`, which is kept equal to conda-forge's.
 
@@ -51,7 +55,7 @@ Python packages are `noarch: python`, built and tested with `python_min` from `v
 The upstream repository must be a Quarto extension: `_extensions/<name>/_extension.yml` lists its filters under `contributes.filters`. It declares two more keys, which Quarto ignores:
 
 ```yaml
-pandoc-required: ">=3.1.1"            # the pandoc versions the filter supports
+pandoc-required: ">=3.1.1"            # the oldest pandoc whose Lua API the filter needs
 pandoc-test: pandoc lua spec/run.lua  # the command that tests it, run from the repository root
 ```
 

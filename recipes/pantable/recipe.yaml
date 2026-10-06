@@ -32,10 +32,11 @@ requirements:
     - numpy >=1.16,<3
     - panflute >=2.3.1,<2.4
     - pyyaml >=5,<7
-    # A JSON filter: pandoc runs it, so it needs the native engine, from
-    # 3.7.0.2 (upstream's tested minimum). conda-forge also caps pandoc <4;
-    # here the pandoc API does that job.
-    - pandoc >=3.7.0.2
+    # A JSON filter: pandoc runs it, so it needs the native engine, of any
+    # version; pandoc-api is the constraint. Upstream tests from 3.7.0.2: older
+    # pandoc's grid table writer drops text in cells (3.6.3: `***Fruit***`
+    # becomes `***`), a pandoc bug, so no reason to refuse it.
+    - pandoc
     - pandoc-api ${{ pandoc_api }}.*
   run_constraints:
     - coloredlogs >=14,<16
