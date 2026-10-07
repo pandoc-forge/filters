@@ -1,0 +1,69 @@
+# Written by hand: Python packages aren't generated from filters.yaml.
+context:
+  version: "2.3.1"
+  build_number: 0
+
+package:
+  name: panflute
+  version: ${{ version }}
+
+# Upstream tagged 2.3.1 as v2.3.0 (2024-03-20, 1c5447d): its version.py says
+# 2.3.1 and its panflute/ is the PyPI sdist's. The sdist leaves out the test
+# fixtures, so we build from the tag.
+source:
+  url: https://github.com/sergiocorreia/panflute/archive/refs/tags/v2.3.0.tar.gz
+  sha256: 10427acad5d4f5a394becff6af51e876ea2d622bd206e9471e4606360f3ad3d7
+
+build:
+  number: ${{ build_number }}
+  noarch: python
+  string: pandoc_forge_${{ build_number }}
+  script: ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+  python:
+    entry_points:
+      - panflute = panflute:main
+      - panfl = panflute:panfl
+
+requirements:
+  host:
+    - python ${{ python_min }}.*
+    - pip
+    - setuptools
+  run:
+    - python >=${{ python_min }}
+    - click >=6,<9
+    - pyyaml >=3,<7
+    # The pandoc API panflute reads and writes. conda-forge bounds pandoc's
+    # version instead (>=2.11.0.4,<4); the API is what panflute checks. A
+    # library needs no engine, but whichever is installed is pandoc-forge's.
+    - pandoc-api ${{ pandoc_api }}.*
+
+tests:
+  - python:
+      imports:
+        - panflute
+      pip_check: true
+      python_version: ${{ python_min }}.*
+  # Upstream's own suite, against the installed panflute and pandoc-forge's
+  # pandoc.
+  - files:
+      source:
+        - examples/**
+        - tests/**
+    requirements:
+      run:
+        - python ${{ python_min }}.*
+        - pandoc
+        - pytest
+    script:
+      - echo '# Testing' | pandoc -F panflute
+      - panfl --help
+      - python -m pytest -v tests
+
+about:
+  homepage: https://github.com/sergiocorreia/panflute
+  repository: https://github.com/sergiocorreia/panflute
+  documentation: https://scorreia.com/software/panflute/
+  license: BSD-3-Clause
+  license_file: LICENSE
+  summary: Pythonic pandoc filters

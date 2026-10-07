@@ -36,6 +36,9 @@ jobs:
       - name: Check recipes match filters.yaml and upstream
         run: pixi run check
 
+      - name: Check recipes follow the dependency convention
+        run: pixi run lint
+
       - name: Build
         run: pixi run build "$DEV_CHANNEL"
 

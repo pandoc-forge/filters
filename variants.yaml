@@ -5,3 +5,7 @@
 # build numbers and rebuild.
 pandoc_api:
   - "1.23"
+# The oldest Python the noarch Python packages support and are tested with.
+# Kept equal to conda-forge's python_min, whose packages they install with.
+python_min:
+  - "3.11"
