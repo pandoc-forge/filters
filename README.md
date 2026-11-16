@@ -17,7 +17,13 @@ pixi workspace channel add --prepend https://prefix.dev/pandoc-forge/dev
 pixi add pandoc pandoc-amsthm
 ```
 
-A Lua filter installs to `$CONDA_PREFIX/share/pandoc/filters/`. Until pandoc can search more than one data directory ([jgm/pandoc#11889](https://github.com/jgm/pandoc/pull/11889)), give its full path:
+A Lua filter installs to `$CONDA_PREFIX/share/pandoc/filters/`. The environment's activation adds `$CONDA_PREFIX/share/pandoc` to `PANDOC_DATA_DIRS`, which pandoc 3.14 and later search for data files ([jgm/pandoc#12010](https://github.com/jgm/pandoc/pull/12010)), so the filter works by name:
+
+```sh
+pandoc -L amsthm.lua ...
+```
+
+Older pandoc versions ignore `PANDOC_DATA_DIRS`. With them, give the full path:
 
 ```sh
 pandoc -L "$CONDA_PREFIX/share/pandoc/filters/amsthm.lua" ...
